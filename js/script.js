@@ -1,85 +1,80 @@
 let jogadas = 0;
 let contagem = document.getElementById('jogadas');
-console.log(contagem);
 const cards = document.querySelectorAll('.card');
-cards.forEach(card => card.addEventListener('click', flipCard));
-let hasFlippedCard = false;
-let lockBoard = false;
-let firstCard, secondCard;
+cards.forEach(card => card.addEventListener('click', girar));
+let temCardVirado = false;
+let bloqueado = false;
+let primeiro, segundo;
+let cardsSelecionados = [];
 
-document.body.onload = startGame();
+document.body.onload = start();
 
-
-function startGame() {
+function start() {
     jogadas = 0;
     contagem.innerHTML = jogadas;
-    resetBoard();
+    resetar();
     cards.forEach(card => {
-        console.log('oi')
-        card.classList.remove('removed');
+        card.addEventListener('click', girar);
+        card.classList.remove('removed', 'girar');
     });
-    shuffle();
+    embaralhar();
 }
 
 
-function flipCard() {
-    if (lockBoard) return;
-    if (this === firstCard) return;
-
+function girar() {
+    if (bloqueado) return;
+    if (this === primeiro) return;
     this.classList.add('girar');
-
-    if (!hasFlippedCard) {
-        hasFlippedCard = true;
-        firstCard = this;
-
+    if (!temCardVirado) {
+        temCardVirado = true;
+        primeiro = this;
         return;
     }
-
-    secondCard = this;
+    segundo = this;
     jogadas++;
     contagem.innerHTML = jogadas;
-    checkForMatch();
+    checar();
+
 }
 
-function checkForMatch() {
-    console.log('oi');
-    let isMatch = firstCard.dataset.model === secondCard.dataset.model;
-    console.log(isMatch);
-    isMatch ? disableCards() : unflipCards();
+function checar() {
+    var checagem = primeiro.dataset.model == segundo.dataset.model;
+    checagem ? desabilitar() : desfazer();
 }
 
-function disableCards() {
-    firstCard.classList.add('removed');
-    secondCard.classList.add('removed');
-    firstCard.removeEventListener('click', flipCard);
-    secondCard.removeEventListener('click', flipCard);
-
-    resetBoard();
+function desabilitar() {
+    primeiro.classList.add('removed');
+    segundo.classList.add('removed');
+    primeiro.removeEventListener('click', girar);
+    segundo.removeEventListener('click', girar);
+    cardsSelecionados = document.querySelectorAll('.removed');
+    cardsSelecionados.length == cards.length ? ganhou() : resetar()
 }
 
-function unflipCards() {
-    lockBoard = true;
-
+function desfazer() {
     setTimeout(() => {
-        firstCard.classList.remove('girar');
-        secondCard.classList.remove('girar');
-
-        resetBoard();
+        primeiro.classList.remove('girar');
+        segundo.classList.remove('girar');
+        resetar();
     }, 700);
+    bloqueado = true;
 }
 
-function resetBoard() {
-    [hasFlippedCard, lockBoard] = [false, false];
-    [firstCard, secondCard] = [null, null];
+function resetar() {
+    [temCardVirado, bloqueado] = [false, false];
+    [primeiro, segundo] = [null, null];
 }
 
-function shuffle() {
-    cards.forEach(card => {
-        let randomPos = Math.floor(Math.random() * 12);
-        card.style.order = randomPos;
-    });
+function embaralhar() {
+    cards.forEach(card => card.style.order = Math.floor(Math.random() * 12));
 }
 
+function ganhou() {
+    let modal = document.getElementById('modal');
+    modal.style.display = 'inline-block';
+}
 
-
-cards.forEach(card => card.addEventListener('click', flipCard));
+function fechar() {
+    let modal = document.getElementById('modal');
+    modal.style.display = 'none';
+}
