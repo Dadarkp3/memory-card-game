@@ -67,7 +67,7 @@ function desfazer() {
         primeiro.classList.remove('girar');
         segundo.classList.remove('girar');
         resetar();
-    }, 700);
+    }, 400);
     bloqueado = true;
 }
 
