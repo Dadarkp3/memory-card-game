@@ -20,6 +20,17 @@ function start() {
     embaralhar();
 }
 
+function resetar() {
+    bloqueado = false;
+    temCardVirado = false;
+    primeio = null;
+    segundo = null;
+}
+
+function embaralhar() {
+    cards.forEach(card => card.style.order = Math.floor(Math.random() * 12));
+}
+
 
 function girar() {
     if (bloqueado) return;
@@ -60,14 +71,6 @@ function desfazer() {
     bloqueado = true;
 }
 
-function resetar() {
-    [temCardVirado, bloqueado] = [false, false];
-    [primeiro, segundo] = [null, null];
-}
-
-function embaralhar() {
-    cards.forEach(card => card.style.order = Math.floor(Math.random() * 12));
-}
 
 function ganhou() {
     let modal = document.getElementById('modal');
